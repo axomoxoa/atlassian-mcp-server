@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "atlassian-mcp-server"
+version = "0.1.0"
+description = "MCP server for Jira and Confluence on Atlassian Cloud"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.27.0",
+    "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "poethepoet>=0.30.0",
+    "pytest>=8.3.5",
+]
+
+[project.scripts]
+atlassian-mcp-server = "atlassian_mcp_server.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlassian_mcp_server"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.poe.tasks]
+test = "pytest"
+smoke = "python scripts/smoke_test.py"
+smoke-tools = "python scripts/smoke_tools.py"
+run-stdio = "atlassian-mcp-server"
+run-http = "atlassian-mcp-server --transport streamable-http --port 8000"
+inspector = "mcp dev src/atlassian_mcp_server/server.py"
+docker-build = "docker build -t atlassian-mcp-server:local ."
+docker-up = "docker compose up -d --build"
+docker-down = "docker compose down"
+

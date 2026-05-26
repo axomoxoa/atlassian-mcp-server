@@ -1,0 +1,17 @@
+services:
+  atlassian-mcp-server:
+    image: atlassian-mcp-server:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      ATLASSIAN_ENV_FILE: /run/secrets/atlassian.env
+      ATLASSIAN_MCP_TOOLSETS: ${ATLASSIAN_MCP_TOOLSETS:-all}
+    volumes:
+      - type: bind
+        source: ${ATLASSIAN_HOST_ENV_FILE}
+        target: /run/secrets/atlassian.env
+        read_only: true
+    restart: unless-stopped
